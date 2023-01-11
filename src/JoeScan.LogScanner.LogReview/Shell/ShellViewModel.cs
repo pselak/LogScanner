@@ -6,6 +6,7 @@ using JoeScan.LogScanner.LogReview.SectionTable;
 using JoeScan.LogScanner.LogReview.ToolBar;
 using JoeScan.LogScanner.Shared.Log3D;
 using NLog;
+using System;
 
 namespace JoeScan.LogScanner.LogReview.Shell;
 
@@ -17,6 +18,8 @@ public class ShellViewModel : Screen
     public NavigatorViewModel Navigator { get; }
     public Log3DWrapperViewModel Log3D { get; }
     public SectionTableViewModel SectionTable { get; }
+
+
 
     public ShellViewModel(ILogger logger,
         ToolBarViewModel toolBar,
@@ -32,5 +35,7 @@ public class ShellViewModel : Screen
         Log3D = log3D;
         SectionTable = sectionTable;
         Logger.Debug("Started LogReview tool.");
+
     }
+
 }

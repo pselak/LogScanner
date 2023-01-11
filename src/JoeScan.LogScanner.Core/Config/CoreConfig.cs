@@ -2,6 +2,7 @@
 using Nini.Ini;
 using NLog;
 using System.Configuration;
+using System.Globalization;
 using UnitsNet;
 using UnitsNet.Units;
 
@@ -45,7 +46,8 @@ public class CoreConfig : ConfigBase
         {
             if (config != null)
             {
-                EncoderPulseInterval = ParseAndConvert(config.GetString("EncoderPulseInterval"));
+                //EncoderPulseInterval = ParseAndConvert(config.GetString("EncoderPulseInterval"));
+                EncoderPulseInterval=Double.Parse("0.06045", CultureInfo.InvariantCulture);
                 IsValid = true;
             }
             else

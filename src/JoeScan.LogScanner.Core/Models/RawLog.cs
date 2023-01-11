@@ -1,4 +1,6 @@
-﻿using System.IO.Compression;
+﻿using System.Diagnostics;
+using System.IO.Compression;
+using UnitsNet;
 
 namespace JoeScan.LogScanner.Core.Models;
 
@@ -42,11 +44,14 @@ public static class RawLogReaderWriter
         bw.Write(r.Id.ToByteArray()); // 16 byte array
         bw.Write(r.TimeScanned.ToBinary()); // 64 bits encoding datetime and ticks
         bw.Write(r.ProfileData.Count); //32 bit int
-
+        Stopwatch stopwatch= Stopwatch.StartNew();
         foreach (var profile in r.ProfileData)
         {
             profile.Write(bw);
+
         }
+        stopwatch.Stop();
+        long timeMs = stopwatch.ElapsedMilliseconds;
         bw.Flush();
     }
 

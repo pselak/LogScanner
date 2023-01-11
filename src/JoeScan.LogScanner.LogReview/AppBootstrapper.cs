@@ -14,6 +14,10 @@ using JoeScan.LogScanner.LogReview.SectionTable;
 using JoeScan.LogScanner.LogReview.Settings;
 using JoeScan.LogScanner.Shared.Log3D;
 using MvvmDialogs;
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
 
 namespace JoeScan.LogScanner.LogReview;
 
@@ -26,9 +30,12 @@ public class AppBootstrapper : AutofacBootstrapper
 
     protected override void ConfigureContainer(ContainerBuilder builder)
     {
+
         builder.Register(c => new ConfigurationBuilder<ILogReviewSettings>()
             .UseJsonFile(Path.Combine(c.Resolve<IConfigLocator>().GetDefaultConfigLocation(), "LogReviewConfig.json"))
             .Build()).SingleInstance();
+
+
 
         // the actual log scanner engine is in CoreModule
         builder.RegisterModule<CoreModule>();
@@ -37,6 +44,27 @@ public class AppBootstrapper : AutofacBootstrapper
         // use the reviewer object as an observable that holds the loaded log data
         builder.RegisterType<LogReviewer>().As<ILogModelObservable>().SingleInstance();
         builder.RegisterType<DialogService>().As<IDialogService>();
+    }
+
+    protected override void OnExit(object sender, EventArgs e)
+    {
+        Process[] pname = Process.GetProcessesByName("JoeScan.LogScanner.LogReview");
+        try
+        {
+            if (pname.Length > 0)
+            {
+                pname.FirstOrDefault().Kill();
+            }
+        }
+        catch (Exception)
+        {
+            Thread.Sleep(500);
+            if (!pname.FirstOrDefault().HasExited)
+            {
+                throw;
+            }
+        }
+
     }
 }
 

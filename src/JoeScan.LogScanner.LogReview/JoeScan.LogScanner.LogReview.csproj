@@ -13,8 +13,6 @@
     <PackageReference Include="Autofac" Version="6.3.0" />
     <PackageReference Include="Autofac.Extras.NLog" Version="4.0.0" />
     <PackageReference Include="Caliburn.Micro" Version="4.0.173" />
-    <PackageReference Include="Config.Net" Version="4.19.0" />
-    <PackageReference Include="Config.Net.Json" Version="4.19.0" />
     <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.20.2" />
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.11.0" />
     <PackageReference Include="MvvmDialogs" Version="8.0.0" />
@@ -25,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\LogScanner.Mebor\LogScanner.Mebor\LogScanner.Mebor\LogScanner.Mebor.csproj" />
     <ProjectReference Include="..\JoeScan.LogScanner.Core\JoeScan.LogScanner.Core.csproj" />
     <ProjectReference Include="..\JoeScan.LogScanner.Shared\JoeScan.LogScanner.Shared.csproj" />
   </ItemGroup>

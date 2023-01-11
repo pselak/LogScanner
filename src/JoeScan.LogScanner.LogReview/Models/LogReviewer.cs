@@ -2,8 +2,11 @@
 using Caliburn.Micro;
 using JoeScan.LogScanner.Core.Models;
 using JoeScan.LogScanner.LogReview.Interfaces;
+using LogScanner.Mebor;
 using NLog;
+using OxyPlot;
 using System;
+using System.Collections.Generic;
 
 namespace JoeScan.LogScanner.LogReview.Models;
 
@@ -13,6 +16,7 @@ public class LogReviewer : PropertyChangedBase, ILogModelObservable
     public LogModelBuilder ModelBuilder { get; }
 
     #region Bound Properties
+    MeborLogConsumer meborLogConsumer = new MeborLogConsumer();
 
     public RawLog? CurrentRawLog
     {
@@ -49,6 +53,7 @@ public class LogReviewer : PropertyChangedBase, ILogModelObservable
                 Sections.AddRange(currentLogModel.Sections);
                 CurrentSection = Sections[0];
             }
+
             
         }
     }
@@ -98,6 +103,9 @@ public class LogReviewer : PropertyChangedBase, ILogModelObservable
             CurrentRawLog = RawLogReaderWriter.Read(fileName);
             CurrentFile = fileName;
             NotifyOfPropertyChange(() => CurrentFile);
+            LogModelResult logModelResult = new LogModelResult(CurrentRawLog, CurrentLogModel, new List<string>());
+
+            meborLogConsumer.Consume(logModelResult);
         }
         catch (Exception e)
         {

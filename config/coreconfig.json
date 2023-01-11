@@ -2,7 +2,7 @@
   "Units": "Inches",
 
   "SingleZoneLogAssemblerConfig": {
-    "EncoderPulseInterval": 0.000565866,
+    "EncoderPulseInterval": 0.06045,
     "MinProfileSpacing": 0.03,
     "MinLogLength": 100,
     "MaxLogLength": 150
