@@ -64,21 +64,21 @@ public class AppBootstrapper : AutofacBootstrapper
         Assembly executingAssembly = Assembly.GetExecutingAssembly();
 
         // TODO: move this to module so headless can use it too
-        // string applicationDirectory = Path.GetDirectoryName(executingAssembly.Location);
-        // foreach (var file in Directory.GetFiles(Path.Combine(applicationDirectory!, "vendor"), "*.dll"))
-        // {
-        //     try
-        //     {
-        //         var vendorAssembly = Assembly.LoadFile(file);
-        //         builder.RegisterAssemblyModules(new Assembly[]{vendorAssembly});
-        //     }
-        //     catch
-        //     {
-        //
-        //     }
-        // }
+        string applicationDirectory = Path.GetDirectoryName(executingAssembly.Location);
+        foreach (var file in Directory.GetFiles(Path.Combine(applicationDirectory!, "vendor"), "*.dll"))
+        {
+            try
+            {
+                var vendorAssembly = Assembly.LoadFile(file);
+                builder.RegisterAssemblyModules(new Assembly[] { vendorAssembly });
+            }
+            catch
+            {
 
-       
+            }
+        }
+
+
     }
 
    

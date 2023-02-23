@@ -19,11 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoeScan.LogScanner.Service"
 		{F3354F34-D3E3-4739-AB02-023A674B9981} = {F3354F34-D3E3-4739-AB02-023A674B9981}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoeScan.LogScanner.Js25", "JoeScan.LogScanner.Js25\JoeScan.LogScanner.Js25.csproj", "{2CAE6E50-379D-4C4F-B81F-71812874715B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoeScan.LogScanner.Js25", "adapters\JoeScan.LogScanner.Js25\JoeScan.LogScanner.Js25.csproj", "{2CAE6E50-379D-4C4F-B81F-71812874715B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoeScan.LogScanner.Js50", "JoeScan.LogScanner.Js50\JoeScan.LogScanner.Js50.csproj", "{ED03457A-838B-4D58-894B-BD3BB1B4EF9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoeScan.LogScanner.Js50", "adapters\JoeScan.LogScanner.Js50\JoeScan.LogScanner.Js50.csproj", "{ED03457A-838B-4D58-894B-BD3BB1B4EF9C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoeScan.LogScanner.Replay", "JoeScan.LogScanner.Replay\JoeScan.LogScanner.Replay.csproj", "{89E043D2-FE1E-4B5C-8927-E33D46A2A6C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoeScan.LogScanner.Replay", "adapters\JoeScan.LogScanner.Replay\JoeScan.LogScanner.Replay.csproj", "{89E043D2-FE1E-4B5C-8927-E33D46A2A6C0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "Adapters", "{AAE979EA-E80F-4784-9503-2176681A6F36}"
 EndProject
