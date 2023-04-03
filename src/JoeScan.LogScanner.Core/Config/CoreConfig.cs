@@ -46,8 +46,7 @@ public class CoreConfig : ConfigBase
         {
             if (config != null)
             {
-                //EncoderPulseInterval = ParseAndConvert(config.GetString("EncoderPulseInterval"));
-                EncoderPulseInterval=Double.Parse("0.06045", CultureInfo.InvariantCulture);
+                EncoderPulseInterval = ParseAndConvert(config.GetString("EncoderPulseInterval"));
                 IsValid = true;
             }
             else
