@@ -35,7 +35,6 @@
     <PackageReference Include="Autofac" Version="6.3.0" />
     <PackageReference Include="Autofac.Extras.NLog" Version="4.0.0" />
     <PackageReference Include="Caliburn.Micro" Version="4.0.173" />
-    <PackageReference Include="Config.Net" Version="5.1.5" />
     <PackageReference Include="gong-wpf-dragdrop" Version="3.1.1" />
     <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.20.2" />
     <PackageReference Include="JoeScan.Pinchot" Version="13.1.3" />
