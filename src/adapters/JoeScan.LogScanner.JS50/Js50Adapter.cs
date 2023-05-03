@@ -281,6 +281,7 @@ public class Js50Adapter : IScannerAdapter
                              $"to {headConfig.MinLaserOn}/{headConfig.DefaultLaserOn}/{headConfig.MaxLaserOn} "
                              + "(min/default/max)");
                 conf.SetLaserOnTime(headConfig.MinLaserOn, headConfig.DefaultLaserOn, headConfig.MaxLaserOn);
+                conf.LaserDetectionThreshold = 150; // or higher, default is 120, max is 1023
                 logger.Debug($"Setting Scan Phase Offset for {scanHead.ID} to {headConfig.ScanPhaseOffset} µs");
                 conf.ScanPhaseOffset = headConfig.ScanPhaseOffset;
                 logger.Debug($"Applying configuration to {scanHead.ID}");
