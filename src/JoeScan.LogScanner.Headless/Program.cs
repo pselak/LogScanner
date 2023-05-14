@@ -18,7 +18,7 @@ Console.CancelKeyPress += (_, e) =>
     Console.WriteLine("Cancelled");
     autoResetEvent.Set();
 };
-EnableLogging();
+//EnableLogging();
 var builder = new ContainerBuilder();
 // builder.RegisterModule<ReplayModule>();
 builder.RegisterModule<CoreModule>();
