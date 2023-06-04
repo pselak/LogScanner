@@ -168,7 +168,10 @@ public class RawDumperConfig : ConfigBase
             if (config != null)
             {
                 Location = config.GetString("Location", "");
-                
+                HistoryLocation = config.GetString("HistoryLocation", "");
+                HistorySize = config.GetInt("HistorySize", 10000);
+                HistoryEnabled = config.GetBoolean("HistoryEnabled", false);
+
             }
             else
             {
@@ -183,6 +186,9 @@ public class RawDumperConfig : ConfigBase
     }
 
     public string Location { get; init; }
+    public string HistoryLocation { get; init; }
+    public int HistorySize { get; init; }
+    public bool HistoryEnabled { get; init; }
 }
 
 public class SectionBuilderConfig : ConfigBase
