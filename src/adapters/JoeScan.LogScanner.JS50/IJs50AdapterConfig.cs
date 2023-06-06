@@ -19,10 +19,10 @@ public interface IJs50HeadConfig
     public uint Serial { get;  }
     public uint Id { get;  }
     public string Name { get;  }
-    public double MinLaserOn { get;  }
+    public uint MinLaserOn { get;  }
 
-    public double DefaultLaserOn { get;  }
-    public double MaxLaserOn { get;  }
+    public uint DefaultLaserOn { get;  }
+    public uint MaxLaserOn { get;  }
     public double ScanPhaseOffset { get;  }
     [Option(Alias = "Alignment.ShiftX")]
     public double AlignmentShiftX { get;  }
