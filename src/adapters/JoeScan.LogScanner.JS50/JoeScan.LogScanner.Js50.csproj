@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.3.0" />
-    <PackageReference Include="JoeScan.Pinchot" Version="13.1.3">
+    <PackageReference Include="JoeScan.Pinchot" Version="16.1.3">
         
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
