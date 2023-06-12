@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	  <EnableDynamicLoading>true</EnableDynamicLoading>
-	  <AssemblyName>js-50v13</AssemblyName>
+	  <AssemblyName>js-50v16</AssemblyName>
 
   </PropertyGroup>
 
