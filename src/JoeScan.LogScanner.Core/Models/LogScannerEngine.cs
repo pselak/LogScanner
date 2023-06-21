@@ -177,7 +177,7 @@ namespace JoeScan.LogScanner.Core.Models
             // LogModelBroadcastBlock.LinkTo(new ActionBlock<LogModel>((l) => { Debugger.Break(); }));
             foreach (var logModelConsumer in Consumers)
             {
-                logModelConsumer.PluginMessage += ActiveAdapterOnMessageReceived;
+                //logModelConsumer.PluginMessage += ActiveAdapterOnMessageReceived;
                 logModelConsumer.Initialize();
                 if (logModelConsumer.IsInitialized)
                 {
