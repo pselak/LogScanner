@@ -6,6 +6,7 @@ using JoeScan.LogScanner.Core.Interfaces;
 using JoeScan.LogScanner.Core.Models;
 using JoeScan.Pinchot;
 using NLog;
+using System.Reflection;
 using System.Threading.Tasks.Dataflow;
 using Profile = JoeScan.LogScanner.Core.Models.Profile;
 
@@ -42,7 +43,8 @@ public class Js50Adapter : IScannerAdapter
         this.logger = logger;
         encoderUpdater = new ScanSyncReceiverThread(logger);
         logger.Debug($"Created Js50Adapter using JoeScan Pinchot API version {Pinchot.VersionInformation.Version}");
-        Units = UnitSystem.Inches;
+        logger.Debug($"Created Js50Adapter using js50Adapter {Assembly.GetExecutingAssembly()}");
+        Units = UnitSystem.Millimeters;
         encoderUpdater.EventUpdateFrequencyMs = 100;
         encoderUpdater.ScanSyncUpdate += EncoderUpdaterOnScanSyncUpdate;
     }

@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
 	  <EnableDynamicLoading>true</EnableDynamicLoading>
 	  <AssemblyName>js-50v16</AssemblyName>
+	  <AssemblyVersion>1.0.0.2</AssemblyVersion>
 
   </PropertyGroup>
 

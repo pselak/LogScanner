@@ -9,8 +9,8 @@ public static class PinchotProfileConverter
     {
         return new LogScanner.Core.Models.Profile
         {
-            Units = UnitSystem.Inches,
-            Data = pProfile.GetValidXYPoints().Select(q => new Point2D(q.X, q.Y, q.Brightness)).ToArray(),
+            Units = UnitSystem.Millimeters,
+            Data = pProfile.GetValidXYPoints().Select(q => new Point2D(q.X * 25.4, q.Y * 25.4, q.Brightness)).ToArray(),
             ScanningFlags = ScanFlags.None,
             LaserIndex = (uint)pProfile.Laser,
             //TODO: cast from double?
