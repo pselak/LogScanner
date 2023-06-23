@@ -8,6 +8,7 @@ using JoeScan.LogScanner.Core.Interfaces;
 using NLog;
 using NLog.LayoutRenderers.Wrappers;
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks.Dataflow;
 
@@ -116,6 +117,8 @@ namespace JoeScan.LogScanner.Core.Models
             {
                  logger.Debug($"Available Adapter: {a.Name} ");
             }
+
+            logger.Debug($"Scanner engine {Assembly.GetExecutingAssembly()} loaded");
 
             SetupPipeline();
             // set up the background task that every 5 seconds checks the adapter
