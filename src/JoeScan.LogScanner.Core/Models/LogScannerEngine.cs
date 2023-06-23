@@ -20,10 +20,15 @@ namespace JoeScan.LogScanner.Core.Models
         private readonly RawProfileDumper dumper;
         private readonly List<IHeartBeatSubscriber> heartBeatSubscribers;
         private readonly CancellationTokenSource statusCheckerSource = new CancellationTokenSource();
+        private Timer? bufferFillDisplayTimer;
         public IFlightsAndWindowFilter Filter { get; }
         public CoreConfig Config { get; }
         private readonly IEnumerable<IScannerAdapter> availableAdapters;
         private IDisposable? unlinker;
+        private TransformBlock<Profile, Profile> unitConverterBlock;
+        private TransformBlock<Profile, Profile> filterTransformBlock;
+        private ActionBlock<Profile> pipelineEndBlock;
+        private TransformBlock<Profile, Profile> boundingBoxBlock;
         public IReadOnlyList<IScannerAdapter> AvailableAdapters => new List<IScannerAdapter>(availableAdapters);
         public IScannerAdapter? ActiveAdapter { get; private set; }
         private ILogger Logger { get; }
@@ -142,13 +147,13 @@ namespace JoeScan.LogScanner.Core.Models
             };
 
             
-            var unitConverterBlock = new TransformBlock<Profile, Profile>((p) => UnitConverter.Convert(ActiveAdapter.Units, UnitSystem.Millimeters, p));
+            unitConverterBlock = new TransformBlock<Profile, Profile>((p) => UnitConverter.Convert(ActiveAdapter.Units, UnitSystem.Millimeters, p));
             // dumper.DumpBlock is a pass-through from the source block where the profiles originate, scannerAdapter.AvailableProfiles
             dumper.DumpBlock.LinkTo(unitConverterBlock, linkOptions);
-            var boundingBoxBlock = new TransformBlock<Profile, Profile>(BoundingBox.UpdateBoundingBox, blockOptions);
+            boundingBoxBlock = new TransformBlock<Profile, Profile>(BoundingBox.UpdateBoundingBox, blockOptions);
             unitConverterBlock.LinkTo(boundingBoxBlock, linkOptions);
             // then we transform profiles by using a flights-and-window filter 
-            var filterTransformBlock = new TransformBlock<Profile, Profile>(Filter.Apply, blockOptions);
+            filterTransformBlock = new TransformBlock<Profile, Profile>(Filter.Apply, blockOptions);
             // the output of the bounding box block is linked to the filter block
             boundingBoxBlock.LinkTo(filterTransformBlock, linkOptions);
             // the engine also has a broadcast block, basically a tee that distributes all incoming 
@@ -157,7 +162,7 @@ namespace JoeScan.LogScanner.Core.Models
             // the UI components that want a live stream
             filterTransformBlock.LinkTo(RawProfilesBroadcastBlock, linkOptions);
             // end the pipeline by feeding the profiles to the log assembler
-            var pipelineEndBlock = new ActionBlock<Profile>(FeedToAssembler,
+            pipelineEndBlock = new ActionBlock<Profile>(FeedToAssembler,
                 new ExecutionDataflowBlockOptions() { EnsureOrdered = true, MaxDegreeOfParallelism = 1 });
             RawProfilesBroadcastBlock.LinkTo(pipelineEndBlock);
 
@@ -270,6 +275,7 @@ namespace JoeScan.LogScanner.Core.Models
             {
                 ActiveAdapter!.Configure();
                 ActiveAdapter.Start();
+                bufferFillDisplayTimer = new Timer(DumpBufferLevels, null, 0, 5000);
             }
             catch (Exception e)
             {
@@ -289,6 +295,8 @@ namespace JoeScan.LogScanner.Core.Models
             
             try
             {
+                bufferFillDisplayTimer?.Dispose();
+                bufferFillDisplayTimer = null;
                 ActiveAdapter!.Stop();
             }
             catch (Exception e)
@@ -333,6 +341,16 @@ namespace JoeScan.LogScanner.Core.Models
             {
                 heartBeatSubscriber.Callback(ActiveAdapter is { IsRunning: true });
             }
+        }
+
+        private void DumpBufferLevels(object? state)
+        {
+            Logger.Trace($"Adapter Available: \tIN: -- OUT: {ActiveAdapter.AvailableProfiles.Count} ");
+            Logger.Trace($"Dumper Profiles: \tIN:  {dumper.DumpBlock.InputCount} OUT: {dumper.DumpBlock.OutputCount} ");
+            Logger.Trace($"UnitConverter: \tIN:  {unitConverterBlock.InputCount} OUT: {dumper.DumpBlock.OutputCount}");
+            Logger.Trace($"Bounding Box:  \tIN:  {boundingBoxBlock.InputCount} OUT: {boundingBoxBlock.OutputCount} ");
+            Logger.Trace($"Flights Filter: \tIN:  {filterTransformBlock.InputCount} OUT: {filterTransformBlock.OutputCount} ");
+            Logger.Trace($"Pipeline End:   \tIN:  {pipelineEndBlock.InputCount} OUT: -- ");
         }
         #endregion
 
