@@ -212,9 +212,9 @@ public class Js50Adapter : IScannerAdapter
             uint minScanPeriodUs = scanSystem.GetMinScanPeriod();
             Console.WriteLine($"The system has a min scan period of {minScanPeriodUs}µs.");
 
-            if (minScanPeriodUs < 2000)
+            if (minScanPeriodUs < 3000)
             {
-                minScanPeriodUs = (uint)2000;
+                minScanPeriodUs = (uint)3000;
             }
             //scanSystem.StartScanning(Config.ScanRate > systemMaxScanRate ? systemMaxScanRate : Config.ScanRate, Config.DataFormat);
 
