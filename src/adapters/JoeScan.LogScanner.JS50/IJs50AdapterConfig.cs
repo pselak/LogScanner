@@ -6,9 +6,10 @@ namespace JoeScan.LogScanner.Js50;
 
 public interface IJs50AdapterConfig
 {
-    public double ScanRate { get; set; }
+    [Option(DefaultValue = "3000")]
+    public uint ScanPeriodUs { get; set; }
+    [Option(DefaultValue = "XYBrightnessHalf")]
     public DataFormat DataFormat { get; set; }
-    public string Units { get; set; }
     public double EncoderPulseInterval { get; set; }
 
     IEnumerable<IJs50HeadConfig> ScanHeads { get;  }
@@ -18,12 +19,10 @@ public interface IJs50HeadConfig
 {
     public uint Serial { get;  }
     public uint Id { get;  }
-    public string Name { get;  }
     public uint MinLaserOn { get;  }
-
     public uint DefaultLaserOn { get;  }
     public uint MaxLaserOn { get;  }
-    public double ScanPhaseOffset { get;  }
+   
     [Option(Alias = "Alignment.ShiftX")]
     public double AlignmentShiftX { get;  }
     [Option(Alias = "Alignment.ShiftY")]
@@ -32,14 +31,6 @@ public interface IJs50HeadConfig
     public double AlignmentRollDegrees { get;  }
     [Option (Alias ="Alignment.Orientation")]
     public ScanHeadOrientation AlignmentOrientation { get;  }
-   
-    [Option (Alias = "Window.Top")]
-    public double WindowTop { get;  }
-    [Option(Alias = "Window.Bottom")]
-    public double WindowBottom{ get;  }
-    [Option(Alias = "Window.Left")]
-    public double WindowLeft { get;  }
-    [Option(Alias = "Window.Right")]
-    public double WindowRight { get;  }
-
+    [Option(Alias = "Window.Polygon")]
+    public string Window { get; }
 }

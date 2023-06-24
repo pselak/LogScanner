@@ -212,16 +212,20 @@ public class Js50Adapter : IScannerAdapter
 
 
             uint minScanPeriodUs = scanSystem.GetMinScanPeriod();
-            Console.WriteLine($"The system has a min scan period of {minScanPeriodUs}µs.");
+            logger.Debug($"The system has a min scan period of {minScanPeriodUs}µs.");
+            uint requestedScanPeriodUs = Config.ScanPeriodUs;
 
-            if (minScanPeriodUs < 3000)
+            if (minScanPeriodUs > requestedScanPeriodUs)
             {
-                minScanPeriodUs = (uint)3000;
+                logger.Warn($"The requested scan period of {requestedScanPeriodUs}µs is too fast for the system. Using {minScanPeriodUs}µs instead.");
+                requestedScanPeriodUs = minScanPeriodUs+10;
             }
-            //scanSystem.StartScanning(Config.ScanRate > systemMaxScanRate ? systemMaxScanRate : Config.ScanRate, Config.DataFormat);
-
-            const DataFormat format = DataFormat.XYBrightnessFull;
-            scanSystem.StartScanning(minScanPeriodUs, format);
+            else
+            {
+                logger.Debug($"Using requested scan period of {requestedScanPeriodUs}μs.");
+            }
+            logger.Debug($"Requested DataFormat is {Config.DataFormat}");
+            scanSystem.StartScanning(requestedScanPeriodUs, Config.DataFormat);
 
             int failedToPost = 0;
             // we seem to have connected and are scanning
@@ -277,8 +281,8 @@ public class Js50Adapter : IScannerAdapter
 
     private ScanSystem SetupScanSystem()
     {
-        logger!.Debug("Setting up ScanSystem");
-        var system = new ScanSystem(ScanSystemUnits.Inches);
+        logger!.Debug("Setting up ScanSystem with unit: Millimeters");
+        var system = new ScanSystem(ScanSystemUnits.Millimeters);
         logger.Debug($"Configuration contains {Config.ScanHeads.Count()} heads.");
 
         try
@@ -293,20 +297,28 @@ public class Js50Adapter : IScannerAdapter
                              $"to {headConfig.MinLaserOn}/{headConfig.DefaultLaserOn}/{headConfig.MaxLaserOn} "
                              + "(min/default/max)");
                 conf.SetLaserOnTime(headConfig.MinLaserOn, headConfig.DefaultLaserOn, headConfig.MaxLaserOn);
+                
                 conf.LaserDetectionThreshold = 150; // or higher, default is 120, max is 1023
-                logger.Debug($"Setting Scan Phase Offset for {scanHead.ID} to {headConfig.ScanPhaseOffset} µs");
-                //conf.ScanPhaseOffset = headConfig.ScanPhaseOffset;
+                logger.Debug($"Setting LaserDetectionThreshold for {scanHead.ID} to {conf.LaserDetectionThreshold}");
+
                 logger.Debug($"Applying configuration to {scanHead.ID}");
                 scanHead.Configure(conf);
-                logger.Debug($"Setting Window for {scanHead.ID} to {headConfig.WindowTop}/"
-                             + $"{headConfig.WindowBottom}/"
-                             + $"{headConfig.WindowLeft}/"
-                             + $"{headConfig.WindowRight}"
-                             + "(Top/Bottom/Left/Right");
-                scanHead.SetWindow(ScanWindow.CreateScanWindowRectangular(headConfig.WindowTop,
-                    headConfig.WindowBottom,
-                    headConfig.WindowLeft,
-                    headConfig.WindowRight));
+
+                logger.Debug($"Setting Window for {scanHead.ID} to {headConfig.Window}.");
+                var ptList = new List<Point2D>();
+                foreach (string s in headConfig.Window.Split(';', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    var xystr = s.Split(',');
+                    if (xystr.Length != 2)
+                    {
+                        throw new InvalidOperationException($"Invalid window string: {s}");
+                    }
+                    var x = double.Parse(xystr[0]);
+                    var y = double.Parse(xystr[1]);
+                    ptList.Add(new Point2D(x,y,0));
+                }
+                scanHead.SetWindow(ScanWindow.CreateScanWindowPolygonal(ptList));
+
                 logger.Debug($"Setting Alignment for head {scanHead.ID} to ShiftX: {headConfig.AlignmentShiftX}"
                 + $" ShiftY: {headConfig.AlignmentShiftY} "
                 + $" RollDeg: {headConfig.AlignmentRollDegrees}"
