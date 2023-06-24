@@ -136,24 +136,23 @@ namespace JoeScan.LogScanner.Core.Models
         
         private void SetupPipeline()
         {
-            var blockOptions = new ExecutionDataflowBlockOptions()
-            {
-                MaxDegreeOfParallelism = 3,
-                EnsureOrdered = true
-            };
+           
             var linkOptions = new DataflowLinkOptions
             {
                 PropagateCompletion = true
             };
 
             
-            unitConverterBlock = new TransformBlock<Profile, Profile>((p) => UnitConverter.Convert(ActiveAdapter.Units, UnitSystem.Millimeters, p));
+            unitConverterBlock = new TransformBlock<Profile, Profile>((p) => UnitConverter.Convert(ActiveAdapter.Units, UnitSystem.Millimeters, p),
+                new ExecutionDataflowBlockOptions(){EnsureOrdered = true, MaxDegreeOfParallelism = 4});
             // dumper.DumpBlock is a pass-through from the source block where the profiles originate, scannerAdapter.AvailableProfiles
             dumper.DumpBlock.LinkTo(unitConverterBlock, linkOptions);
-            boundingBoxBlock = new TransformBlock<Profile, Profile>(BoundingBox.UpdateBoundingBox, blockOptions);
+            boundingBoxBlock = new TransformBlock<Profile, Profile>(BoundingBox.UpdateBoundingBox, 
+                new ExecutionDataflowBlockOptions(){EnsureOrdered = true, MaxDegreeOfParallelism = 4});
             unitConverterBlock.LinkTo(boundingBoxBlock, linkOptions);
             // then we transform profiles by using a flights-and-window filter 
-            filterTransformBlock = new TransformBlock<Profile, Profile>(Filter.Apply, blockOptions);
+            filterTransformBlock = new TransformBlock<Profile, Profile>(Filter.Apply, 
+                new ExecutionDataflowBlockOptions(){EnsureOrdered = true, MaxDegreeOfParallelism = 4});
             // the output of the bounding box block is linked to the filter block
             boundingBoxBlock.LinkTo(filterTransformBlock, linkOptions);
             // the engine also has a broadcast block, basically a tee that distributes all incoming 
@@ -163,7 +162,7 @@ namespace JoeScan.LogScanner.Core.Models
             filterTransformBlock.LinkTo(RawProfilesBroadcastBlock, linkOptions);
             // end the pipeline by feeding the profiles to the log assembler
             pipelineEndBlock = new ActionBlock<Profile>(FeedToAssembler,
-                new ExecutionDataflowBlockOptions() { EnsureOrdered = true, MaxDegreeOfParallelism = 1 });
+                new ExecutionDataflowBlockOptions() { EnsureOrdered = true, MaxDegreeOfParallelism = 4 });
             RawProfilesBroadcastBlock.LinkTo(pipelineEndBlock);
 
             // next pipeline is for RawLogs, we have the BufferBlock RawLogs from the assembler for that
