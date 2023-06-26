@@ -133,20 +133,18 @@ namespace JoeScan.LogScanner.Core.Models
         
         private void SetupPipeline()
         {
-            var blockOptions = new ExecutionDataflowBlockOptions()
-            {
-                MaxDegreeOfParallelism = 3,
-                EnsureOrdered = true
-            };
+           
             var linkOptions = new DataflowLinkOptions
             {
                 PropagateCompletion = true
             };
 
             
+
             dumper.DumpBlock.LinkTo(RawProfilesBroadcastBlock, linkOptions);
+
             pipelineEndBlock = new ActionBlock<Profile>(FeedToAssembler,
-                new ExecutionDataflowBlockOptions() { EnsureOrdered = true, MaxDegreeOfParallelism = 1 });
+                new ExecutionDataflowBlockOptions() { EnsureOrdered = true, MaxDegreeOfParallelism = 4 });
             RawProfilesBroadcastBlock.LinkTo(pipelineEndBlock);
 
             // next pipeline is for RawLogs, we have the BufferBlock RawLogs from the assembler for that
