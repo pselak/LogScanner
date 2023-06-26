@@ -350,6 +350,7 @@ namespace JoeScan.LogScanner.Core.Models
             Logger.Trace($"Bounding Box:  \tIN:  {boundingBoxBlock.InputCount} OUT: {boundingBoxBlock.OutputCount} ");
             Logger.Trace($"Flights Filter: \tIN:  {filterTransformBlock.InputCount} OUT: {filterTransformBlock.OutputCount} ");
             Logger.Trace($"Pipeline End:   \tIN:  {pipelineEndBlock.InputCount} OUT: -- ");
+            Logger.Trace($"Memory used:   {Process.GetCurrentProcess().WorkingSet64} bytes");
         }
         #endregion
 
