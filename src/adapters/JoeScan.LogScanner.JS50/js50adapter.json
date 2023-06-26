@@ -1,70 +1,54 @@
 ﻿{
-  "ScanRate": 200.0,
-  "DataFormat": "XYHalfLMHalf",
-  "Units": "Inches",
-  "EncoderPulseInterval": 0.2,
+  "ScanPeriodUs": 3000.0,
+  "DataFormat": "XYBrightnessHalf",
+  "EncoderPulseInterval": 0.00749162,
   "ScanHeads": [
     {
       "Serial": 20669,
       "Id": 0,
-      "Name": "Top",
       "MinLaserOn": 100,
       "DefaultLaserOn": 100,
       "MaxLaserOn": 100,
-      "ScanPhaseOffset": 0,
       "Alignment": {
-        "ShiftX": -0.195,
-        "ShiftY": -6.062,
+        "ShiftX": -4.953,
+        "ShiftY": -153.9748,
         "RollDegrees": -0.430,
         "Orientation": "CableIsUpstream"
       },
       "Window": {
-        "Top": 31,
-        "Bottom": -2,
-        "Left": -15,
-        "Right": 15
+        "Polygon": "-300,500;300,500;300,150;-300,150"
       }
     },
     {
       "Serial": 20673,
       "Id": 1,
-      "Name": "Left",
       "MinLaserOn": 100,
       "DefaultLaserOn": 100,
       "MaxLaserOn": 100,
-      "ScanPhaseOffset": 500,
       "Alignment": {
-        "ShiftX": 16.492,
-        "ShiftY": 19.834,
+        "ShiftX": 418.8968,
+        "ShiftY": 503.7836,
         "RollDegrees": -245.326,
         "Orientation": "CableIsUpstream"
       },
       "Window": {
-        "Top": 30,
-        "Bottom": -2,
-        "Left": -15,
-        "Right": 4
+        "Polygon": "120,60;0,15;-350,130;-350,400;120,400"
       }
     },
     {
       "Serial": 20674,
       "Id": 2,
-      "Name": "Right",
       "MinLaserOn": 100,
       "DefaultLaserOn": 100,
       "MaxLaserOn": 100,
-      "ScanPhaseOffset": 1000,
       "Alignment": {
-        "ShiftX": -16.627,
-        "ShiftY": 19.866,
+        "ShiftX": -422.3258,
+        "ShiftY": 504.5964,
         "RollDegrees": 244.755,
         "Orientation": "CableIsUpstream"
       },
       "Window": {
-        "Top": 30,
-        "Bottom": -2,
-        "Left": -15,
-        "Right": 10
+        "Polygon": "-120,60;-120,400;350,400;350,155;240,100;0,10"
       }
     }
   ]
