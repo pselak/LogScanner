@@ -329,6 +329,7 @@ namespace JoeScan.LogScanner.Core.Models
             Logger.Trace($"Adapter Available: \tIN: -- OUT: {ActiveAdapter.AvailableProfiles.Count} ");
             Logger.Trace($"Dumper Profiles: \tIN:  {dumper.DumpBlock.InputCount} OUT: {dumper.DumpBlock.OutputCount} ");
             Logger.Trace($"Pipeline End:   \tIN:  {pipelineEndBlock.InputCount} OUT: -- ");
+            Logger.Trace($"Memory used:   {Process.GetCurrentProcess().WorkingSet64} bytes");
         }
         #endregion
 
