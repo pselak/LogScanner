@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using JoeScan.LogScanner.Core.Models;
+using NLog;
 
 namespace JoeScan.LogScanner.Service
 {
@@ -14,8 +16,12 @@ namespace JoeScan.LogScanner.Service
         HttpListener httpListener;
         Thread listenThread1;
         LogScannerEngine engine;
+        static Logger logApp;
+
+
         public void StartServer(ref LogScannerEngine _engine)
         {
+            logApp = LogManager.GetCurrentClassLogger();
             engine = _engine;
             httpListener = new HttpListener();
             httpListener.Prefixes.Add("http://localhost:8000/");
@@ -52,10 +58,12 @@ namespace JoeScan.LogScanner.Service
                     {
                         if (action == "Start")
                         {
+                            logApp.Debug($"scanning started");
                             engine.Start();
                         }
                         if (action == "Stop")
                         {
+                            logApp.Debug($"scanning stopped");
                             engine.Stop();
                         }
                     }
