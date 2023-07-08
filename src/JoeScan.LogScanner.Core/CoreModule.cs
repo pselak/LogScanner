@@ -32,6 +32,8 @@ public class CoreModule : Module
 
 
         builder.RegisterType<DefaultConfigLocator>().As<IConfigLocator>();
+
+        builder.RegisterType<LogModelSender>().As<ILogModelSender>().SingleInstance();
        
         builder.Register(c =>
             new CoreConfig(new IniConfigSource("core.ini").Configs["Core"])).AsSelf();

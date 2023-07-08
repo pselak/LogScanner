@@ -135,7 +135,12 @@ table LogModelT (fs_serializer)
    maxDiameterZ: double;
    minDiameterZ: double;
    buttEndFirst: bool;
-   rawLog: RawLogT;
+}
 
-
+table LogModelResultT (fs_serializer) {
+	LogModel: LogModelT;
+    RawLog: RawLogT;
+    Messages: [string];
+    LogNumber: int32;
+    IsValid: bool;
 }

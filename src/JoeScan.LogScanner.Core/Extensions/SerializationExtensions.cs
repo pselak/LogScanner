@@ -6,55 +6,71 @@ namespace JoeScan.LogScanner.Core.Extensions;
 
 public static class SerializationExtensions
 {
+    public static LogModelResultT ToLogModelResultT(this LogModelResult res)
+    {
+        var r = new LogModelResultT
+        {
+            LogNumber = res.LogNumber,
+            IsValid = res.IsValidModel,
+            Messages = res.Messages.ToList(),
+            RawLog = res.RawLog.ToRawLogT(),
+            LogModel = res.LogModel?.ToLogModelT()
+        };
+        return r;
+    }
+
     public static LogModelT ToLogModelT(this LogModel logModel)
     {
         var t = new LogModelT
-            {
-                LogNumber = logModel.LogNumber,
-                Interval = logModel.Interval,
-                TimeScanned = logModel.TimeScanned.ToBinary(),
-                Length = logModel.Length,
-                EncoderPulseInterval = logModel.EncoderPulseInterval,
-                FirstGoodProfile = logModel.FirstGoodProfile.ToProfileT(),
-                LastGoodProfile = logModel.LastGoodProfile.ToProfileT(),
-                CenterLineSlopeX = logModel.CenterLineSlopeX,
-                CenterLineSlopeY = logModel.CenterLineSlopeY,
-                CenterLineInterceptXZ = logModel.CenterLineInterceptXZ,
-                CenterLineInterceptYZ = logModel.CenterLineInterceptYZ,
-                CenterLineStart = logModel.CenterLineStart.ToPoint3DT(),
-                CenterLineEnd = logModel.CenterLineEnd.ToPoint3DT(),
-                SmallEndDiameter = logModel.SmallEndDiameter,
-                SmallEndDiameterX = logModel.SmallEndDiameterX,
-                SmallEndDiameterY = logModel.SmallEndDiameterY,
-                LargeEndDiameter = logModel.LargeEndDiameter,
-                LargeEndDiameterX = logModel.LargeEndDiameterX,
-                LargeEndDiameterY = logModel.LargeEndDiameterY,
-                Sweep = logModel.Sweep,
-                SweepAngleRad = logModel.SweepAngleRad,
-                CompoundSweep = logModel.CompoundSweep,
-                CompoundSweep90 = logModel.CompoundSweep90,
-                Taper = logModel.Taper,
-                TaperX = logModel.TaperX,
-                TaperY = logModel.TaperY,
-                Volume = logModel.Volume,
-                BarkVolume = logModel.BarkVolume,
-                MaxDiameter = logModel.MaxDiameter,
-                MinDiameter = logModel.MinDiameter,
-                MaxDiameterZ = logModel.MaxDiameterZ,
-                MinDiameterZ = logModel.MinDiameterZ,
-                ButtEndFirst = logModel.ButtEndFirst,
-                RawLog = logModel.RawLog.ToRawLogT(),
-                Sections = new List<LogSectionT>()
-            };
+        {
+            LogNumber = logModel.LogNumber,
+            Interval = logModel.Interval,
+            TimeScanned = logModel.TimeScanned.ToBinary(),
+            Length = logModel.Length,
+            EncoderPulseInterval = logModel.EncoderPulseInterval,
+            FirstGoodProfile = logModel.FirstGoodProfile.ToProfileT(),
+            LastGoodProfile = logModel.LastGoodProfile.ToProfileT(),
+            CenterLineSlopeX = logModel.CenterLineSlopeX,
+            CenterLineSlopeY = logModel.CenterLineSlopeY,
+            CenterLineInterceptXZ = logModel.CenterLineInterceptXZ,
+            CenterLineInterceptYZ = logModel.CenterLineInterceptYZ,
+            CenterLineStart = logModel.CenterLineStart.ToPoint3DT(),
+            CenterLineEnd = logModel.CenterLineEnd.ToPoint3DT(),
+            SmallEndDiameter = logModel.SmallEndDiameter,
+            SmallEndDiameterX = logModel.SmallEndDiameterX,
+            SmallEndDiameterY = logModel.SmallEndDiameterY,
+            LargeEndDiameter = logModel.LargeEndDiameter,
+            LargeEndDiameterX = logModel.LargeEndDiameterX,
+            LargeEndDiameterY = logModel.LargeEndDiameterY,
+            Sweep = logModel.Sweep,
+            SweepAngleRad = logModel.SweepAngleRad,
+            CompoundSweep = logModel.CompoundSweep,
+            CompoundSweep90 = logModel.CompoundSweep90,
+            Taper = logModel.Taper,
+            TaperX = logModel.TaperX,
+            TaperY = logModel.TaperY,
+            Volume = logModel.Volume,
+            BarkVolume = logModel.BarkVolume,
+            MaxDiameter = logModel.MaxDiameter,
+            MinDiameter = logModel.MinDiameter,
+            MaxDiameterZ = logModel.MaxDiameterZ,
+            MinDiameterZ = logModel.MinDiameterZ,
+            ButtEndFirst = logModel.ButtEndFirst,
+            // we don't reference the RawLog here, it is part of LogModelResultT
+            // RawLog = logModel.RawLog.ToRawLogT(), 
+            Sections = new List<LogSectionT>()
+        };
         foreach (var section in logModel.Sections)
         {
             t.Sections.Add(section.ToLogSectionT());
         }
+
         t.RejectedSections = new List<LogSectionT>();
         foreach (var section in logModel.RejectedSections)
         {
             t.RejectedSections.Add(section.ToLogSectionT());
         }
+
         return t;
     }
 
@@ -74,11 +90,13 @@ public static class SerializationExtensions
         {
             s.AcceptedPoints.Add(point.ToPoint2DT());
         }
+
         s.ModeledProfile = new List<Point2DT>();
         foreach (var point in logSection.ModeledProfile)
         {
             s.ModeledProfile.Add(point.ToPoint2DT());
         }
+
         s.RejectedPoints = new List<Point2DT>();
         foreach (var point in logSection.RejectedPoints)
         {
@@ -173,6 +191,13 @@ public static class SerializationExtensions
 
     public static EllipseT ToEllipseT(this Ellipse e)
     {
-        return new EllipseT { A = e.A, B = e.B, Theta = e.Theta, X = e.X, Y = e.Y };
+        return new EllipseT
+        {
+            A = e.A,
+            B = e.B,
+            Theta = e.Theta,
+            X = e.X,
+            Y = e.Y
+        };
     }
 }
