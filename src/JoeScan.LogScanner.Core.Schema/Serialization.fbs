@@ -1,0 +1,141 @@
+﻿
+attribute "fs_serializer";
+attribute "fs_valueStruct";
+
+
+namespace JoeScan.LogScanner.Core.Schema;
+
+struct Point2DT (fs_valueStruct) // fs_valueStruct tells FlatSharp to generate a C# struct (value type) instead of a class
+{
+    x : double;
+    y : double;
+    b : double;
+}
+struct Point3DT (fs_valueStruct) // fs_valueStruct tells FlatSharp to generate a C# struct (value type) instead of a class
+{
+    x : double;
+    y : double;
+    z : double;
+    b : double;
+}
+
+enum UnitTypeT : byte {
+    Inches = 0,
+    Millimeters = 1
+}
+
+enum ScanFlagsT : int32{
+    None = 0,
+    Overrun = 1,
+    InternalError = 2,
+    SequenceError = 4
+}
+
+enum InputFlagsT : int32{ 
+    None = 0,
+    EncoderB = 1,
+    EncoderA = 2,
+    StartScan = 4
+}
+
+struct  RectT  {
+    x : double ;
+    y: double ;
+    width : double;
+    height : double;
+}
+
+table EllipseT (fs_serializer) {
+    a: double;
+    b: double;
+    area: double;
+    theta: double;
+    x: double;
+    y: double;
+}
+
+table ProfileT (fs_serializer) {
+    units : UnitTypeT;
+    scanningFlags : ScanFlagsT;
+    laserIndex : uint32;
+    laserOnTimeUs : uint16;
+    encoderValue : int64;
+    sequenceNumber : uint32;
+    timeStampNs : uint64;
+    scanHeadId : uint32;
+    camera: uint32;
+    inputs : InputFlagsT;
+    boundingBox : RectT;
+    data : [Point2DT];
+}
+
+table RawLogT (fs_serializer) {
+    profileData: [ProfileT];
+    logNumber: int32;
+    timeScanned: int64;
+    Id: string;
+    rawFileName: string;
+}
+
+table LogSectionT (fs_serializer) {
+    isValid : bool;
+    profiles : [ProfileT];
+    sectionCenter : double;
+    acceptedPoints : [Point2DT];
+    modeledProfile  : [Point2DT];
+    rejectedPoints  : [Point2DT];
+    boundingBox : RectT;
+    ellipseModel : EllipseT;
+    barkAllowance : double;
+    rawDiameterX : double;
+    rawDiameterY : double;
+    totalArea : double;
+    woodArea : double;
+    fitError : double;
+    rawDiameterMin : double;
+    rawDiameterMax : double;
+    centerLineX : double;
+    centerLineY : double;
+}
+
+table LogModelT (fs_serializer) 
+{
+   logNumber: int32 ;
+   interval: double ;
+   timeScanned: int64;
+   length : double ;
+   sections : [LogSectionT];
+   rejectedSections: [LogSectionT];
+   encoderPulseInterval : double;
+   firstGoodProfile : ProfileT;
+   lastGoodProfile : ProfileT;
+   centerLineSlopeX: double;
+   centerLineSlopeY: double;
+   centerLineInterceptXZ : double;
+   centerLineInterceptYZ : double;
+   centerLineStart: Point3DT;
+   centerLineEnd: Point3DT;
+   smallEndDiameter: double;
+   smallEndDiameterX: double;
+   smallEndDiameterY: double;
+   largeEndDiameter: double;
+   largeEndDiameterX: double;
+   largeEndDiameterY: double;
+   sweep: double;
+   sweepAngleRad: double;
+   compoundSweep: double;
+   compoundSweep90: double;
+   taper: double;
+   taperX: double;
+   taperY: double;
+   volume: double;
+   barkVolume: double;
+   maxDiameter: double;
+   minDiameter: double;
+   maxDiameterZ: double;
+   minDiameterZ: double;
+   buttEndFirst: bool;
+   rawLog: RawLogT;
+
+
+}

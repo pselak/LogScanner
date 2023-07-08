@@ -35,6 +35,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\JoeScan.LogScanner.Core.Schema\JoeScan.LogScanner.Core.Schema.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="core.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
