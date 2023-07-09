@@ -21,6 +21,7 @@ namespace JoeScan.LogScanner.Core.Models
         private readonly CancellationTokenSource statusCheckerSource = new CancellationTokenSource();
         public IFlightsAndWindowFilter Filter { get; }
         public CoreConfig Config { get; }
+        public ILogModelSender ModelSender { get; }
         private readonly IEnumerable<IScannerAdapter> availableAdapters;
         private IDisposable? unlinker;
         public IReadOnlyList<IScannerAdapter> AvailableAdapters => new List<IScannerAdapter>(availableAdapters);
@@ -90,7 +91,8 @@ namespace JoeScan.LogScanner.Core.Models
             LogModelBuilder modelBuilder,
             RawProfileDumper dumper,
             IEnumerable<ILogModelConsumerPlugin> consumers,
-            CoreConfig config
+            CoreConfig config,
+            ILogModelSender modelSender
            )
         {
             this.archiver = archiver;
@@ -101,6 +103,8 @@ namespace JoeScan.LogScanner.Core.Models
 
             Filter = filter;
             Config = config;
+            ModelSender = modelSender;
+            ModelSender.Start();
             this.availableAdapters = availableAdapters;
             ActiveAdapter = null;
             Logger = logger;
@@ -166,22 +170,25 @@ namespace JoeScan.LogScanner.Core.Models
             RawLogsBroadcastBlock.LinkTo( ModelBuilder.BuilderBlock);
 
             ModelBuilder.BuilderBlock.LinkTo(LogModelBroadcastBlock);
+            
+            LogModelBroadcastBlock.LinkTo(new ActionBlock<LogModelResult>((model)=>ModelSender.SendAsync(model)));
+
            // ModelBuilder.BuilderBlock.LinkTo(new ActionBlock<LogModel>((l) => { Debugger.Break(); }));
             // the LogModelBroadcastBlock receives finished LogModels and now the end user can subscribe to 
             // it and do any processing needed, like a sorter or sending to an optimizer
            // LogModelBroadcastBlock.LinkTo(new ActionBlock<LogModel>((l) => { Debugger.Break(); }));
-            foreach (var logModelConsumer in Consumers)
-            {
-                logModelConsumer.Initialize();
-                if (logModelConsumer.IsInitialized)
-                {
-                    // TODO: check for version and GUID here
-                    var userBlock = new ActionBlock<LogModelResult>(logModelConsumer.Consume);
-                    // TODO: save disposable for possible unlinking
-                    LogModelBroadcastBlock.LinkTo(userBlock);
-                }
-               
-            }
+            // foreach (var logModelConsumer in Consumers)
+            // {
+            //     logModelConsumer.Initialize();
+            //     if (logModelConsumer.IsInitialized)
+            //     {
+            //         // TODO: check for version and GUID here
+            //         var userBlock = new ActionBlock<LogModelResult>(logModelConsumer.Consume);
+            //         // TODO: save disposable for possible unlinking
+            //         LogModelBroadcastBlock.LinkTo(userBlock);
+            //     }
+            //    
+            // }
         }
 
         #endregion
