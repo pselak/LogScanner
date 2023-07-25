@@ -160,6 +160,10 @@ public class SingleZoneLogAssembler : ILogAssembler
                         }
                         LogReady();
                     }
+                    else
+                    {
+                        Logger.Debug($"Log too short. Length: {scannedSoFar}");
+                    }
 
                     // fall through for debris, this will clean up:
                     SetCurrentState(LogAssemblerState.Idle);
