@@ -117,7 +117,7 @@ public class SingleZoneLogAssembler : ILogAssembler
 
                 if (reversed && isValidProfile)
                 {
-                    Logger.Trace("reversed scan direction detected. Removing already collected profiles.");
+                    Logger.Trace($"reversed scan direction detected. Removing already collected profiles. Encoder value: {p.EncoderValues[0]}");
                     RemoveFromEnd(p);
                     if (accumulatedProfiles.Count == 0)
                     {
