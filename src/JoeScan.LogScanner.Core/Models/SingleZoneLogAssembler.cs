@@ -19,6 +19,8 @@ public class SingleZoneLogAssembler : ILogAssembler
     private readonly double minLogLength;
     private readonly double maxLogLength;
     private readonly double minProfileSpacing;
+    private long firstEncVal;
+    private long lastEncVal;
 
     #region Lifecycle
 
@@ -162,7 +164,7 @@ public class SingleZoneLogAssembler : ILogAssembler
                     }
                     else
                     {
-                        Logger.Debug($"Log too short. Length: {scannedSoFar}");
+                        Logger.Debug($"Log too short. Length: {scannedSoFar} firstEncVal: {firstEncVal} lastEncVal: {lastEncVal}");
                     }
 
                     // fall through for debris, this will clean up:
@@ -244,6 +246,8 @@ public class SingleZoneLogAssembler : ILogAssembler
         if (last != null)
         {
             //TODO: does travel direction matter?
+            firstEncVal= accumulatedProfiles.First().EncoderValues[0];
+            lastEncVal = last.EncoderValues[0];
             return (last.EncoderValues[0] - accumulatedProfiles.First().EncoderValues[0]) * encoderPulseInterval;
         }
 

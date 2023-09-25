@@ -55,6 +55,9 @@ public class LogModelBuilder
             List<LogSection> sections = new List<LogSection>();
             List<LogSection> rejectedSections = new List<LogSection>();
             var firstEncVal = log.ProfileData[0].EncoderValues[0];
+            long lastEncVal = log.ProfileData[log.ProfileData.Count-1].EncoderValues[0]; ;
+
+           
 
             // this will contain the z position of each profile - for the JS-25 we will need more work as the encoder may be de-synced
             // but for the JS-50 series we have always synchronized encoder positions for all heads
@@ -110,7 +113,10 @@ public class LogModelBuilder
             }
 
             var elapsed = sw.ElapsedMilliseconds;
-            logger.Debug($"Log Model Generation took: {elapsed} ms");
+            
+
+
+            logger.Debug($"Log Model Generation took: {elapsed} ms. firstEncVal: {firstEncVal} lastEncVal: {lastEncVal}");
             // var fitErrors = model.Sections.Select(s => s.FitError).ToArray();
              model = new LogModel(log.LogNumber, config.SectionInterval, log.TimeScanned, config.MaxFitError,
                 coreConfig.EncoderPulseInterval) { Sections = sections, RejectedSections = rejectedSections, RawLog = log };
