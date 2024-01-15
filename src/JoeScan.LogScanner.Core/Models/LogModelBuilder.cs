@@ -116,7 +116,7 @@ public class LogModelBuilder
             
 
 
-            logger.Debug($"Log Model Generation took: {elapsed} ms. firstEncVal: {firstEncVal} lastEncVal: {lastEncVal}");
+            logger.Debug($"Log Model Generation took: {elapsed} ms. firstEncVal: {firstEncVal:n0} lastEncVal: {lastEncVal:n0}");
             // var fitErrors = model.Sections.Select(s => s.FitError).ToArray();
              model = new LogModel(log.LogNumber, config.SectionInterval, log.TimeScanned, config.MaxFitError,
                 coreConfig.EncoderPulseInterval) { Sections = sections, RejectedSections = rejectedSections, RawLog = log };

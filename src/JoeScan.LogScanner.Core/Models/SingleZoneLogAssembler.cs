@@ -3,7 +3,10 @@ using JoeScan.LogScanner.Core.Enums;
 using JoeScan.LogScanner.Core.Extensions;
 using JoeScan.LogScanner.Core.Interfaces;
 using NLog;
+using NLog.Fluent;
+using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Text;
 using System.Threading.Tasks.Dataflow;
 
 namespace JoeScan.LogScanner.Core.Models;
@@ -21,6 +24,21 @@ public class SingleZoneLogAssembler : ILogAssembler
     private readonly double minProfileSpacing;
     private long firstEncVal;
     private long lastEncVal;
+
+    //------------modification from Mebor---------------
+    private int encoderDebugLength = 100;
+    Queue<EncoderDebug> encoderDebugQueue=null;
+
+    private class EncoderDebug
+    {
+        public long id;
+        public DateTime timeStamp;
+        public long encoderValue;
+        public uint head;
+        public LogAssemblerState state;
+    }
+    private long tempEncoderDebugId;
+    //------------end modification from MEBOR------------
 
     #region Lifecycle
 
@@ -54,6 +72,9 @@ public class SingleZoneLogAssembler : ILogAssembler
         minLogLength = Config.MinLogLength;
         maxLogLength = Config.MaxLogLength;
         minProfileSpacing = Config.MinProfileSpacing;
+
+        encoderDebugQueue = new Queue<EncoderDebug>();
+        tempEncoderDebugId = 0;
     }
 
     #endregion
@@ -81,6 +102,23 @@ public class SingleZoneLogAssembler : ILogAssembler
         else
         {
             isValidProfile = ProfileValidator.IsValid(p);
+            //------------modification from Mebor---------------
+            if (GetCurrentState() != LogAssemblerState.Collecting && isValidProfile)
+            {
+                EncoderDebug encoderDebug = new EncoderDebug();
+                encoderDebug.id = tempEncoderDebugId; 
+                tempEncoderDebugId++;
+                encoderDebug.timeStamp = DateTime.Now;
+                encoderDebug.encoderValue = p.EncoderValues[0];
+                encoderDebug.head = p.ScanHeadId;
+                encoderDebug.state = GetCurrentState();
+                if (encoderDebugQueue.Count > encoderDebugLength)
+                {
+                    encoderDebugQueue.Dequeue();
+                }
+                encoderDebugQueue.Enqueue(encoderDebug);
+            }
+            //----------- end modification from Mebor-----------
         }
 
         switch (GetCurrentState())
@@ -107,6 +145,9 @@ public class SingleZoneLogAssembler : ILogAssembler
                 if (accumulatedProfiles.Count > startLogCount)
                 {
                     SetCurrentState(LogAssemblerState.Collecting);
+                    //------------modification from Mebor---------------
+                    PrintEncoderValues();
+                    //------------modification from Mebor---------------
                 }
 
                 break;
@@ -117,7 +158,7 @@ public class SingleZoneLogAssembler : ILogAssembler
 
                 if (reversed && isValidProfile)
                 {
-                    Logger.Trace($"reversed scan direction detected. Removing already collected profiles. Encoder value: {p.EncoderValues[0]}");
+                    Logger.Trace($"reversed scan direction detected. Removing already collected profiles. Encoder value: {p.EncoderValues[0]:n0}");
                     RemoveFromEnd(p);
                     if (accumulatedProfiles.Count == 0)
                     {
@@ -164,7 +205,7 @@ public class SingleZoneLogAssembler : ILogAssembler
                     }
                     else
                     {
-                        Logger.Debug($"Log too short. Length: {scannedSoFar} firstEncVal: {firstEncVal} lastEncVal: {lastEncVal}");
+                        Logger.Debug($"Log too short. Length: {scannedSoFar} firstEncVal: {firstEncVal:n0} lastEncVal: {lastEncVal:n0}");
                     }
 
                     // fall through for debris, this will clean up:
@@ -254,6 +295,18 @@ public class SingleZoneLogAssembler : ILogAssembler
         return 0.0;
     }
 
+    //------------modification from Mebor---------------
+    internal void PrintEncoderValues()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine($"LogId:{Numerator.PeekNextPieceNumber()}");
+        foreach ( EncoderDebug encoderDebug in encoderDebugQueue)
+        {
+            sb.AppendLine($"ID:{encoderDebug.id}#timestamp:{encoderDebug.timeStamp.ToString("HH:mm:ss.fff")}#encoder value:{encoderDebug.encoderValue:n0}#head: {encoderDebug.head}#Assembler state: {encoderDebug.state}");
+        }
+        Logger.Debug("\n" + sb.ToString() );
+    }
+    //------------modification from Mebor---------------
     private async void LogReady()
     {
         Stopwatch sw = Stopwatch.StartNew();
